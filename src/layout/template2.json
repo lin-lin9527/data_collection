@@ -1,0 +1,122 @@
+{
+  "1": {
+    "title": "標題1",
+    "background": "#90c090",
+    "content": [
+      {
+        "name": "冷氣A溫度",
+        "data": 5,
+        "unit": "°C"
+      },
+      {
+        "name": "冷氣B溫度",
+        "data": 3,
+        "unit": "°C"
+      },
+      {
+        "name": "濕度",
+        "data": 50,
+        "unit": "%RH"
+      },
+      {
+        "name": "電壓",
+        "data": 50,
+        "unit": "V"
+      },
+      {
+        "name": "電流",
+        "data": 50,
+        "unit": "mA"
+      },
+      {
+        "name": "轉速",
+        "data": 3600,
+        "unit": "RPM"
+      }
+    ]
+  },
+  "2": {
+    "title": "標題2",
+    "background": "#70abd3",
+    "content": [
+      {
+        "name": "溫度1",
+        "data": 20,
+        "unit": "°C"
+      },
+      {
+        "name": "溫度2",
+        "data": 23,
+        "unit": "°C"
+      },
+      {
+        "name": "溫度3",
+        "data": 4,
+        "unit": "°C"
+      },
+      {
+        "name": "溫度4",
+        "data": 12,
+        "unit": "°C"
+      },
+      {
+        "name": "溫度5",
+        "data": 34,
+        "unit": "°C"
+      },
+      {
+        "name": "溫度6",
+        "data": 25,
+        "unit": "°C"
+      }
+    ]
+  },
+  "3": {
+    "title": "標題3",
+    "background": "#90c090",
+    "content": [
+      {
+        "name": "溫度1",
+        "data": 20,
+        "unit": "°C"
+      },
+      {
+        "name": "溫度2",
+        "data": 23,
+        "unit": "°C"
+      }
+    ]
+  },
+  "4": {
+    "title": "標題4",
+    "background": "#60c0bf",
+    "content": [
+      {
+        "name": "溫度1",
+        "data": 20,
+        "unit": "°C"
+      },
+      {
+        "name": "溫度2",
+        "data": 23,
+        "unit": "°C"
+      }
+    ]
+  },
+  "5": {
+    "title": "標題5",
+    "background": "#c09090",
+    "content": [
+      {
+        "name": "溫度1",
+        "data": 20,
+        "unit": "°C"
+      },
+      {
+        "name": "溫度2",
+        "data": 23,
+        "unit": "°C"
+      }
+    ]
+  }
+}
