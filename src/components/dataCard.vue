@@ -36,7 +36,7 @@
         </v-container>
       </v-card-title>
       <v-container>
-        <v-row>
+        <!-- <v-row>
           <v-col cols="1" class="pa-0"></v-col>
           <h2 style="color: white;">{{ info.info1 }}</h2>
           <v-spacer></v-spacer>
@@ -45,6 +45,24 @@
           <v-col cols="1" class="pa-0"></v-col>
           <h2 style="color: white">{{ info.info2 }}</h2>
           <v-spacer></v-spacer>
+        </v-row> -->
+        <v-row>
+          <v-col cols="1" class="pa-0"></v-col>
+          <v-col class="pa-0">
+            <h2 style="color: white;">{{ info.info1 }}</h2>
+          </v-col>
+          <v-col class="pa-0">
+            <h2 style="color: white;">{{ info.info2 }}</h2>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="1" class="pa-0"></v-col>
+          <v-col class="pa-0">
+            <h2 style="color: white;">{{ info.info3 }}</h2>
+          </v-col>
+          <v-col class="pa-0">
+            <h2 style="color: white;">{{ info.info4 }}</h2>
+          </v-col>
         </v-row>
       </v-container>
       <div style="height:20px"></div>

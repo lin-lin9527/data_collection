@@ -2,39 +2,42 @@
   <v-main class="brown lighten-5" style="background-color: rgb(144, 155, 161)">
     <v-container class="pa-4">
       <v-row class="mt-0">
-        <v-col cols="12" lg="4" xl="4" xxl="4" class="delay1">
-          <v-card class="card-info" style="min-height: 400px">
+        <v-col cols="12" lg="3" xl="4" xxl="4" class="delay1">
+          <v-card class="card-info" style="min-height: 350px">
             <v-card-title>
               <h3 class="card-title">R1 (TEST)</h3>
             </v-card-title>
             <v-container>
+              <div style="height:50px"></div>
               <v-card style="background-color: rgb(247, 247, 247)">
                 <v-container>
-                  <h3>資訊1:</h3>
-                  <h3>資訊2:</h3>
-                  <h3>資訊3:</h3>
-                  <h3>資訊4:</h3>
-                  <h3>資訊5:</h3>
+                  <div v-for="(item,index) in R1" :key="index">
+                    <h3>{{item.title}} &nbsp; : {{item.value}}</h3>
+                  </div>
                 </v-container>
               </v-card>
             </v-container>
             <div style="height: 10px"></div>
           </v-card>
         </v-col>
-        <v-col cols="12" lg="4" xl="4" xxl="4" class="delay2">
-          <v-card class="card-info" style="min-height: 400px">
+        <v-col cols="12" lg="5" xl="4" xxl="4" class="delay2">
+          <v-card class="card-info" style="min-height: 350px">
             <v-card-title>
               <h3 class="card-title">R2 (TEST)</h3>
             </v-card-title>
             <v-container>
               <v-row>
                 <v-col cols="5">
-                  <div v-for="(item, index) in donutChartInfo" :key="index">
-                    <h3>{{ item.title }}: {{ item.value }}</h3>
+                  <div v-for="(item, index) in R2" :key="index">
+                    <h3 :style="[
+                      {
+                        'color': item.color
+                      }
+                    ]">{{ item.title }} &nbsp; : {{ item.value }}</h3>
                   </div>
                 </v-col>
                 <v-spacer></v-spacer>
-                <div id="donut"></div>
+                <div class="donutchart"></div>
                 <v-spacer></v-spacer>
               </v-row>
             </v-container>
@@ -42,21 +45,80 @@
           </v-card>
         </v-col>
         <v-col cols="12" lg="4" xl="4" xxl="4" class="delay3">
-          <v-card class="card-info" style="min-height: 400px">
+          <v-card class="card-info" style="min-height: 350px">
             <v-card-title>
               <h3 class="card-title">R3 (TEST)</h3>
             </v-card-title>
             <v-container>
               <v-row>
                 <v-col>
-                  <div id="my_dataviz"></div>
+                  <div style="width: 100%" class="barchart"></div>
                 </v-col>
               </v-row>
             </v-container>
             <div style="height: 10px"></div>
           </v-card>
         </v-col>
-        
+      </v-row>
+      <v-row class="delay4">
+        <v-col>
+          <v-card class="card-info">
+            <v-card-title>
+              <h3 class="card-title">R4(TEST)</h3>
+            </v-card-title>
+            <!-- <v-row>
+              <v-spacer></v-spacer>
+              <v-col cols="5">
+                <div id="chart"></div>
+              </v-col>
+              <v-spacer></v-spacer>
+            </v-row> -->
+            <v-container>
+              <v-table density="comfortable" height="400px">
+                <thead>
+                  <tr>
+                    <th class="text-center">
+                      <h3 class="table-title">審核單號</h3>
+                    </th>
+                    <th class="text-center">
+                      <h3 class="table-title">活動/節目名稱</h3>
+                    </th>
+                    <th class="text-center">
+                      <h3 class="table-title">審核類型</h3>
+                    </th>
+                    <th class="text-center">
+                      <h3 class="table-title">審核狀態</h3>
+                    </th>
+                    <th class="text-center">
+                      <h3 class="table-title">審核結果</h3>
+                    </th>
+                    <th class="text-center">
+                      <h3 class="table-title">審核備註</h3>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item,index) in R4" :key="index" 
+                    :style="[
+                      {
+                        'background-color': index %2 == 0 ? 'rgb(230, 230, 230)' : 'white' ,
+                      },
+                    ]"
+                  >
+                    <td class="text-center">{{ item.name }}</td>
+                    <td class="text-center table-title">{{ item.events }}</td>
+                    <td class="text-center">{{ item.types }}</td>
+                    <td class="text-center">{{ item.status }}</td>
+                    <td class="text-center">{{ item.results }}</td>
+                    <td class="text-center">{{ item.remarks }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+              <v-divider></v-divider>
+            </v-container>
+            <div style="height:10px"></div>
+          </v-card>
+        </v-col>
       </v-row>
     </v-container>
   </v-main>
@@ -67,33 +129,65 @@ import * as donutChart from "../d3/donutChart.js";
 
 import * as barChart from "../d3/barChart.js";
 
+// import * as lineChart from "../d3/lineChart.js";
+
+
+// Vuex
+import { createHelpers } from "vuex-map-fields";
+const { mapFields } = createHelpers({
+  getterType: "getData",
+  mutationType: "updateData",
+});
+
 
 export default {
   data() {
     return {
-      donutChartInfo: [
+      R1: [
+        {
+          "title": "工令單號",
+          "value": "M110XXXXXXX"
+        },
+        {
+          "title": "客戶",
+          "value": "A"
+        },
+        {
+          "title": "規格",
+          "value": "R-1232211"
+        },
+        {
+          "title": "交期",
+          "value": "2024/01/23"
+        },
+        {
+          "title": "數量",
+          "value": "23"
+        }
+      ],
+      R2: [
         {
           title: "Soft-serve",
-          value: 286,
-          all: 1098,
+          color: "#5A39AC",
+          value: 0,
         },
         {
           title: "Scooped",
-          value: 472,
-          all: 1098,
+          color: "#DD98D6",
+          value: 0,
         },
         {
           title: "No Prefer",
-          value: 318,
-          all: 1098,
+          color: "#01B468",
+          value: 70,
         },
         {
           title: "Not Sure",
-          value: 22,
-          all: 1098,
+          color: "#08B2B2",
+          value: 100,
         },
       ],
-      barChartInfo: [
+      R3: [
         {
           title: "Data 1",
           value: 286,
@@ -110,38 +204,177 @@ export default {
           title: "Data 4",
           value: 666,
         },
-      ]
+        {
+          title: "Data 5",
+          value: 666,
+        },
+        {
+          title: "Data 6",
+          value: 666,
+        },
+      ],
+      R4: [
+        {
+          name: 'Fern',
+          events: 'Low',
+          types: '20cm',
+          status: 'Yes',
+          results: "Success",
+          remarks: "None",
+        },
+        {
+          name: 'Snake Plant',
+          events: 'Low',
+          types: '50cm',
+          status: 'No',
+          results: "Success",
+          remarks: "None",
+        },
+        {
+          name: 'Monstera',
+          events: 'Medium',
+          types: '60cm',
+          status: 'No',
+          results: "Fail",
+          remarks: "None",
+        },
+        {
+          name: 'Pothos',
+          events: 'Low to medium',
+          types: '40cm',
+          status: 'Yes',
+          results: "Success",
+          remarks: "None",
+        },
+        {
+          name: 'ZZ Plant',
+          events: 'Low to medium',
+          types: '90cm',
+          status: 'Yes',
+          results: "Success",
+          remarks: "None",
+        },
+        {
+          name: 'Spider Plant',
+          events: 'Bright, indirect',
+          types: '30cm',
+          status: 'Yes',
+          results: "Fail",
+          remarks: "None",
+        },
+        {
+          name: 'Air Plant',
+          events: 'Bright, indirect',
+          types: '15cm',
+          status: 'Yes',
+          results: "Success",
+          remarks: "None",
+        },
+        {
+          name: 'Peperomia',
+          events: 'Bright, indirect',
+          types: '25cm',
+          status: 'Yes',
+          results: "Success",
+          remarks: "None",
+        },
+        {
+          name: 'Aloe Vera',
+          events: 'Bright, direct',
+          types: '30cm',
+          status: 'Yes',
+          results: "Fail",
+          remarks: "None",
+        },
+        {
+          name: 'Jade Plant',
+          events: 'Bright, direct',
+          types: '40cm',
+          status: 'Yes',
+          results: "Success",
+          remarks: "None",
+        },
+      ],
     };
   },
+  created() {
+    clearInterval(this.machineInterval);
+  },
+  computed: {
+    ...mapFields(["machineInterval"]),
+  },
   mounted() {
-    this.dountChartInit();
-    this.barChartInit();
-    
+    this.dataInit();
+    // this.lineChartInit();
+    window.onresize = () => {
+      barChart.editWidth(this.R3, "barchart");
+    };
   },
   methods: {
-    dountChartInit() {
-      donutChart.init(this.donutChartInfo);
-      setInterval(() => {
-        var all = 0;
-        for (let i in this.donutChartInfo) {
-          this.donutChartInfo[i].value = Math.floor(Math.random() * 120);
-          all += this.donutChartInfo[i].value;
+    dataInit() {
+      donutChart.init(this.R2, "donutchart");
+      barChart.init(this.R3, "barchart");
+      
+      clearInterval(this.machineInterval);
+      this.machineInterval = setInterval(() => {
+        // ========================= R2 Data Update =========================
+        for (let i in this.R2) {
+          this.R2[i].value = Math.floor(Math.random() * 120);
         }
-        for (let i in this.donutChartInfo) {
-          this.donutChartInfo[i].all = all;
+        donutChart.update(this.R2, "donutchart");
+        // ========================= R3 Data Update =========================
+        for (let i in this.R3) {
+          this.R3[i].value = Math.floor(Math.random() * 2700);
         }
-        donutChart.update(this.donutChartInfo);
+        barChart.update(this.R3, "barchart");
       }, 5000);
     },
-    barChartInit() {
-      barChart.init(this.barChartInfo);
-      setInterval(() => {
-        for (let i in this.barChartInfo) {
-          this.barChartInfo[i].value = Math.floor(Math.random() * 700);
+    lineChartInit() {
+      var data = [
+        {
+          year: 2000,
+          popularity: 50
+        },
+        {
+          year: 2001,
+          popularity: 150
+        },
+        {
+          year: 2002,
+          popularity: 200
+        },
+        {
+          year: 2003,
+          popularity: 130
+        },
+        {
+          year: 2004,
+          popularity: 240
+        },
+        {
+          year: 2005,
+          popularity: 380
+        },
+        {
+          year: 2006,
+          popularity: 420
         }
-        barChart.update(this.barChartInfo);
-      }, 5000);
+      ];
+      lineChart.init(data);
+      // setInterval(() => {
+      //   var newData = {}
+      //   newData["year"] = data[data.length -1]["year"] + 1
+      //   newData["popularity"] = Math.floor(Math.random() * 700);
+      //   data.push(newData)
+      //   lineChart.update(data);
+      // }, 1000);
     }
+  },
+  onBeforeUnmount() {
+    clearInterval(this.machineInterval);
+  },
+  onUnmounted() {
+    clearInterval(this.machineInterval);
   },
 };
 </script>
@@ -156,6 +389,9 @@ export default {
 .delay3 {
   animation: delay_state 1.3s;
 }
+.delay4 {
+  animation: delay_state 1s;
+}
 @keyframes delay_state {
   0% {
     opacity: 0;
@@ -167,7 +403,7 @@ export default {
   }
 }
 
-.donut-tip,.bar-tip {
+.donutchart-tip,.my_dataviz_tip {
   position: absolute;
   text-align: left;
   word-break: break-word;

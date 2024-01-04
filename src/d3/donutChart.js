@@ -1,35 +1,46 @@
 import * as d3 from "d3";
 var svg, radius, donutWidth, donutTip
+var total
 var legendRectSize = 13;
 var legendSpacing = 7;
+var width = 250;
+var height = 250;
 
-var init = function (data) {
-  var width = 300;
-  var height = 300;
+var init = function (data, id) {
   radius = Math.min(width, height) / 2;
-  donutWidth = 75;
-  svg = d3.select('#donut')
+  donutWidth = 50; // 50: 中間顯示空白，125: 中間填滿
+  svg = d3.select(`.${id}`)
     .append('svg')
     .attr('width', width)
     .attr('height', height)
     .append('g')
     .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
   donutTip = d3.select("body").append("div")
-    .attr("class", "donut-tip")
+    .attr("class", `${id}-tip`)
     .style("opacity", 0);
-  update(data);
+  update(data, id);
 };
 
-var update = function (data) {
-  var color = d3.scaleOrdinal().range(["#5A39AC", "#DD98D6", "#E7C820", "#08B2B2"]);
+var update = function (data, id) {
+  var svgInfo = d3.select(`.${id} svg g`)
+  var tooltipInfo = d3.select(`.${id}-tip`)
+  total = 0
+  for (let i in data) total += data[i].value
+  svgInfo.selectAll(".circle-legend").remove()
   var arc = d3.arc().innerRadius(radius - donutWidth).outerRadius(radius);
   var pie = d3.pie().value((d) => d.value).sort(null);
 
-  var pathData = svg.selectAll('path').data(pie(data))
+  var pathData = svgInfo.selectAll('path').data(pie(data))
   pathData.enter()
     .append('path')
+    .each(function(d) {
+      this._current = {
+        startAngle: d.startAngle,
+        endAngle: d.endAngle
+      };
+    })
     .attr('d', arc)
-    .attr('fill', (d) => color(d.data.title))
+    .attr('fill', (d) => d.data.color)
     .attr('transform', 'translate(0, 0)')
     .on('mouseover', function (d, i) {
       // d3.select(this)
@@ -39,34 +50,10 @@ var update = function (data) {
       //   .attr('stroke', 'rgba(100, 100, 100, 0.2)')
       //   .attr('stroke-width', 5);
       // d3.select(this).transition().duration('50').attr('opacity', '.85');
-      donutTip.transition().duration(300).style("opacity", 1);
-      let num = `<h2>
-          Title: ${i.data.title}
-          <br>
-          Value: ${i.data.value}
-          <br>
-          Total: ${i.data.all}
-          <br>
-          Person: ${(Math.round((i.data.value / i.data.all) * 100)).toString()}%
-        </h2>`;
-      donutTip.html(num)
-        .style("left", (d.pageX + 10) + "px")
-        .style("top", (d.pageY - 15) + "px");
+      tooltipInfo.transition().duration(300).style("opacity", 1);
+      donutTipDraw(d, i, tooltipInfo)
     })
-    .on('mousemove', function (d, i) {
-      let num = `<h2>
-          Title: ${i.data.title}
-          <br>
-          Value: ${i.data.value}
-          <br>
-          Total: ${i.data.all}
-          <br>
-          Person: ${(Math.round((i.data.value / i.data.all) * 100)).toString()}%
-        </h2>`;
-      donutTip.html(num)
-        .style("left", (d.pageX + 10) + "px")
-        .style("top", (d.pageY - 15) + "px");
-    })
+    .on('mousemove', (d, i) => donutTipDraw(d, i, tooltipInfo))
     .on('mouseout', function () {
       // d3.select(this)
       //   .transition()
@@ -75,28 +62,27 @@ var update = function (data) {
       //   .attr('stroke', 'transparent')
       //   .attr('stroke-width', 0);
       // d3.select(this).transition().duration('50').attr('opacity', '1');
-      donutTip.transition().duration(300).style("opacity", 0);
+      tooltipInfo.transition().duration(300).style("opacity", 0);
     });
   function calcTranslate(data, move = 4) {
     const moveAngle = data.startAngle + ((data.endAngle - data.startAngle) / 2);
     return `translate(${- move * Math.cos(moveAngle + Math.PI / 2)}, ${- move * Math.sin(moveAngle + Math.PI / 2)})`;
   }
-  var legend = svg.selectAll('.legend')
-    .data(color.domain())
+  var legend = svgInfo.selectAll('.legend')
+    .data(data)
     .enter()
     .append('g')
     .attr('class', 'circle-legend')
     .attr('transform', function (d, i) {
       var height = legendRectSize + legendSpacing;
-      var offset = height * color.domain().length / 2;
       var horz = -2 * legendRectSize - 13;
-      var vert = i * height - offset;
+      var vert = i * height - 30 ;
       return 'translate(' + horz + ',' + vert + ')';
     });
 
   legend.append('circle')
-    .style('fill', color)
-    .style('stroke', color)
+    .style('fill', (d) => d.color)
+    .style('stroke', (d) => d.color)
     .attr('cx', 0)
     .attr('cy', 0)
     .attr('r', '.5rem');
@@ -104,8 +90,8 @@ var update = function (data) {
   legend.append('text')
     .attr('x', legendRectSize + legendSpacing)
     .attr('y', legendRectSize - legendSpacing)
-    .text((d) => d);
-    
+    .text((d) => d.title);
+  
   pathData.transition()
     .duration(750)
     .attrTween("d", arcTween);
@@ -117,6 +103,21 @@ var update = function (data) {
       return arc(i(t));
     };
   }
+}
+
+var donutTipDraw = function (position, info, tooltip) {
+  let html = `<h2>
+    Title: ${info.data.title}
+    <br>
+    Value: ${info.data.value}
+    <br>
+    Total: ${total}
+    <br>
+    Person: ${(Math.round((info.data.value / total) * 100)).toString()}%
+  </h2>`;
+  tooltip.html(html)
+    .style("left", (position.pageX + 10) + "px")
+    .style("top", (position.pageY - 15) + "px");
 }
 
 export { init, update };

@@ -1,42 +1,44 @@
 import * as d3 from "d3";
 
 var width, height, svg, barTooltip
-var init = function (data) {
-  // set the dimensions and margins of the graph
-  var margin = { top: 10, right: 30, bottom: 90, left: 40 }
-  width = 500
-  // width = document.querySelector("#my_dataviz").clientWidth
-  height = 300 - margin.top - margin.bottom;
+var init = function (data, id) {
+  var margin = { top: 20, right: 40, bottom: 20, left: 50 }
+  width = document.querySelector(`.${id}`).clientWidth - 80
+  height = 200 ;
 
-  // append the svg object to the body of the page
-  svg = d3.select("#my_dataviz")
+  svg = d3.select(`.${id}`)
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
+    .attr("class", `${id}_g`)
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  barTooltip = d3.select("body").append("div")
-    .attr("class", "bar-tip")
-    .style("opacity", 0);
-  update(data);
+  barTooltip = d3.select("body").append("div").attr("class", `${id}_tip`).style("opacity", 0);
+  update(data, id);
 }
 
-var update = function (data) {
+var editWidth = function (data, id) {
+  d3.select(`.${id} svg`).remove();
+  d3.select(`.${id}_tip`).remove();
+  init(data,id)
+}
+
+var update = function (data, id) {
+  var svgInfo = d3.select(`.${id}_g`)
+  var tooltipInfo = d3.select(`.${id}_tip`)
+  svgInfo.selectAll(".xBar").remove()
+  svgInfo.selectAll(".yBar").remove()
   var max = Math.max.apply(null, data.map(function (o) {
     return o.value;
   }))
-  // d3.selectAll("rect").remove()
-  d3.selectAll(".xBar").remove()
-  d3.selectAll(".yBar").remove()
 
-  // Parse the Data
   // X axis
   var x = d3.scaleBand()
     .range([0, width])
-    .domain(data.map(function (d) { return d.title; }))
+    .domain(data.map((d) => { return d.title; }))
     .padding(0.2);
-  svg.append("g")
+  svgInfo.append("g")
     .attr("class", "xBar")
     .attr("transform", "translate(0," + height + ")")
     .call(d3.axisBottom(x))
@@ -44,54 +46,54 @@ var update = function (data) {
     .attr("transform", "translate(0,0)")
     .style("text-anchor", "middle");
 
-  // Add Y axis
-  var y = d3.scaleLinear()
-    .domain([0, max])
-    .range([height, 0]);
-  svg.append("g").attr("class", "yBar").call(d3.axisLeft(y));
+  // Y axis
+  var y = d3.scaleLinear().domain([0, max]).range([height, 0]);
+  svgInfo.append("g").attr("class", "yBar").call(d3.axisLeft(y));
 
   // Bars
-  var barInfo = svg.selectAll(".barInfo").data(data)
+  var barInfo = svgInfo.selectAll(".barInfo").data(data)
   barInfo
     .enter()
     .append("rect")
     .attr("class", "barInfo")
-    .attr("x", function (d) { return x(d.title); })
+    .attr("x", (d) => x(d.title))
     .attr("width", x.bandwidth())
     .attr("fill", "#69b3a2")
-    // no bar at the beginning thus:
-    .attr("height", function (d) { return height - y(0); }) // always equal to 0
-    .attr("y", function (d) { return y(0); })
-    .on('mouseover', function (d, i) {
-      barTooltip.transition().duration(300).style("opacity", 1);
-      let num = `<h2>
-          Title: ${i.title}<br>
-          Value: ${i.value}<br>
-        </h2>`;
-        barTooltip.html(num)
-        .style("left", (d.pageX + 10) + "px")
-        .style("top", (d.pageY - 15) + "px");
+    .attr("height", () => height - y(0))
+    .attr("y", () => y(0))
+    .on('mouseover', (d, i) => {
+      tooltipInfo.transition().duration(300).style("opacity", 1);
+      barTooltipDraw(d, i, tooltipInfo)
     })
-    .on('mousemove', function (d, i) {
-      let num = `<h2>
-          Title: ${i.title}<br>
-          Value: ${i.value}<br>
-        </h2>`;
-        barTooltip.html(num)
-        .style("left", (d.pageX + 10) + "px")
-        .style("top", (d.pageY - 15) + "px");
+    .on('mousemove', function(d, i) {
+      d3.select(this).transition().duration(200).attr("fill", "#08B2B2")
+      barTooltipDraw(d, i, tooltipInfo)
     })
-    .on('mouseout', function () {
-      barTooltip.transition().duration(300).style("opacity", 0);
+    .on('mouseout', function() {
+      d3.select(this).transition().duration(200).attr("fill", "#69b3a2")
+      tooltipInfo.transition().duration(300).style("opacity", 0);
     });
 
   // Animation
-  svg.selectAll("rect")
+  svgInfo.selectAll("rect")
     .transition()
-    .duration(800)
-    .attr("y", function (d) { return y(d.value); })
-    .attr("height", function (d) { return height - y(d.value); })
-    .delay(function (d, i) { return (i * 100) })
+    .duration(1000)
+    .attr("y", (d) => { return y(d.value); })
+    .attr("height", (d) => { return height - y(d.value); })
+    .delay((d, i) => { return (i * 100) })
 }
 
-export { init, update };
+var barTooltipDraw = function (position, info, tooltip) {
+  var left_position;
+  let html = `<h2>
+    Title: ${info.title}<br>
+    Value: ${info.value}<br>
+  </h2>`;
+  if (width / 2 >= position.layerX - 50) left_position = position.pageX + 10;
+  else left_position = position.pageX - 250;
+  tooltip.html(html)
+    .style("left", (left_position) + "px")
+    .style("top", (position.pageY - 15) + "px");
+}
+
+export { init, editWidth, update };

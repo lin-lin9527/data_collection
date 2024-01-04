@@ -24,7 +24,7 @@
       <h3 class="ml-4 mr-4" style="text-align: center" v-html="dateNow"></h3>
     </v-app-bar>
     <v-dialog v-model="warningDialog" width="60%">
-      <v-card class="delay">
+      <v-card :class="warningDialog ? 'delay' : 'out'">
         <v-card-title>
           <h3>Warn List</h3>
         </v-card-title>
@@ -164,12 +164,24 @@ export default {
 @keyframes delay_state {
   0% { 
     opacity: 0;
-    transform: translateY(-250px);
+    transform: translateY(-150px);
   }
   100% { 
     opacity: 1; 
     transform: translateY(0px);
   }
 }
-
+.out {
+  animation: out_state 0.7s;
+}
+@keyframes out_state {
+  0% { 
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  100% { 
+    opacity: 0; 
+    transform: translateY(150px);
+  }
+}
 </style>
