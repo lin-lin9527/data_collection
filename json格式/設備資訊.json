@@ -1,0 +1,76 @@
+{
+  "R1": [
+    {
+      "title": "資訊1",
+      "value": 0
+    },
+    {
+      "title": "資訊2",
+      "value": 1
+    },
+    {
+      "title": "資訊3",
+      "value": 2
+    },
+    {
+      "title": "資訊4",
+      "value": 3
+    },
+    {
+      "title": "資訊5",
+      "value": 4
+    }
+  ],
+  "R2": [
+    {
+      "title": "Soft-serve",
+      "color": "#5A39AC",
+      "value": 0,
+      "all": 100
+    },
+    {
+      "title": "Scooped",
+      "color": "#DD98D6",
+      "value": 0,
+      "all": 100
+    },
+    {
+      "title": "No Prefer",
+      "color": "#E7C820",
+      "value": 0,
+      "all": 100
+    },
+    {
+      "title": "Not Sure",
+      "color": "#08B2B2",
+      "value": 100,
+      "all": 100
+    }
+  ],
+  "R3": [
+    {
+      "title": "Data 1",
+      "value": 286
+    },
+    {
+      "title": "Data 2",
+      "value": 2
+    },
+    {
+      "title": "Data 3",
+      "value": 333
+    },
+    {
+      "title": "Data 4",
+      "value": 666
+    },
+    {
+      "title": "Data 5",
+      "value": 666
+    },
+    {
+      "title": "Data 6",
+      "value": 666
+    }
+  ]
+}
