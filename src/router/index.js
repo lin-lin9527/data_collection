@@ -2,25 +2,30 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 
-// Apply Layout
-import Nav from "@/components/Apply_layout/Nav.vue";
-import Headerbar from "@/components/Apply_layout/Headerbar.vue";
-import Footer from "@/components/Apply_layout/Footer.vue";
+// Apply Layout(template1)
+// import Nav from "@/components/Apply_layout/template1/Nav.vue";
+// import Headerbar from "@/components/Apply_layout/template1/Headerbar.vue";
+// import Footer from "@/components/Apply_layout/template1/Footer.vue";
+// Apply Layout(template2)
+import Nav from "@/components/Apply_layout/template2/Nav.vue";
+import Headerbar from "@/components/Apply_layout/template2/Headerbar.vue";
+import Footer from "@/components/Apply_layout/template2/Footer.vue";
 
 
-import tmp1 from '@/views/tmpTemplate/tmp1.vue'
-import tmp2 from '@/views/tmpTemplate/tmp2.vue'
-import tmp3 from '@/views/tmpTemplate/tmp3.vue'
-import tmp4 from '@/views/tmpTemplate/tmp4.vue'
-import tmp5 from '@/views/tmpTemplate/tmp5.vue'
+import tmp1 from '@/views/test_template/tmp1.vue'
+import tmp2 from '@/views/test_template/tmp2.vue'
+import tmp3 from '@/views/test_template/tmp3.vue'
+import tmp4 from '@/views/test_template/tmp4.vue'
+import tmp5 from '@/views/test_template/tmp5.vue'
 
 // ============================================
-// import login from "@/views/login.vue"
 import login from "@/views/login_template/login1.vue"
 
+// ============================================
 import dataInfo from '@/views/dataInfo.vue'
 import infoStatistics from '@/views/infoStatistics.vue'
 import machineInfo from '@/views/machineInfo.vue'
+import dataLog from '@/views/dataLog.vue'
 
 
 const routes = [
@@ -36,6 +41,21 @@ const routes = [
     name: 'Data Info',
     components: {
       default: dataInfo,
+      nav: Nav,
+      headerbar: Headerbar,
+      footer: Footer,
+    },
+    props: {
+      headerbar: {
+        title: "資料資訊",
+      },
+    },
+  },
+  {
+    path: '/dataLog',
+    name: 'Data Log',
+    components: {
+      default: dataLog,
       nav: Nav,
       headerbar: Headerbar,
       footer: Footer,

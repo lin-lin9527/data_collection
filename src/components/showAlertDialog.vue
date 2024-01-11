@@ -103,7 +103,7 @@
             <v-spacer></v-spacer>
             <v-btn
               large
-              outlined
+              variant="outlined"
               class="text-blue"
               @click="showStateDialogClose()"
             >

@@ -5,11 +5,7 @@
     }
   ]">
     <router-view name="nav"></router-view>
-    <router-view name="headerbar" v-slot="{ Component }">
-      <transition name="headerinfo">
-        <component :is="Component" />
-      </transition>
-    </router-view>
+    <router-view name="headerbar"></router-view>
     <router-view v-slot="{ Component }">
       <transition name="fade">
         <component :is="Component" />
@@ -17,19 +13,6 @@
     </router-view>
     <router-view name="footer"></router-view>
   </v-app>
-  <!-- <v-app v-if="toPath == '/login'" style="background-color: black">
-    <router-view></router-view>
-  </v-app>
-  <v-app v-else style="background-color: rgb(238, 238, 238);">
-    <router-view name="nav"></router-view>
-    <router-view name="headerbar"></router-view>
-    <router-view v-slot="{ Component }">
-      <transition name="fade" mode="out-in">
-        <component :is="Component" />
-      </transition>
-    </router-view>
-    <router-view name="footer"></router-view>
-  </v-app> -->
 </template>
 
 <script>
@@ -80,15 +63,4 @@ export default {
   opacity: 1;
 }
 
-
-// ==========================================
-// .headerinfo-leave-from{
-//   opacity:1
-// }
-// .headerinfo-leave-to{
-//   opacity:0
-// }
-// .headerinfo-leave-active{
-//   transition: opacity 0.2s ease-in;
-// }
 </style>

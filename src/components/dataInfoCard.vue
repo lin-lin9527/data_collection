@@ -47,21 +47,21 @@
           <v-spacer></v-spacer>
         </v-row> -->
         <v-row>
-          <v-col cols="1" class="pa-0"></v-col>
-          <v-col class="pa-0">
-            <h2 style="color: white;">{{ info.info1 }}</h2>
+          <v-col cols="1" lg="1" class="pa-0"></v-col>
+          <v-col cols="12" lg="5" class="pa-0">
+            <h2 style="color: white;text-align: center;">{{ info.info1 }}</h2>
           </v-col>
-          <v-col class="pa-0">
-            <h2 style="color: white;">{{ info.info2 }}</h2>
+          <v-col cols="12" lg="5"  class="pa-0">
+            <h2 style="color: white;text-align: center;">{{ info.info2 }}</h2>
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="1" class="pa-0"></v-col>
-          <v-col class="pa-0">
-            <h2 style="color: white;">{{ info.info3 }}</h2>
+          <v-col cols="1" lg="1" class="pa-0"></v-col>
+          <v-col cols="12" lg="5" class="pa-0">
+            <h2 style="color: white;text-align: center;">{{ info.info3 }}</h2>
           </v-col>
-          <v-col class="pa-0">
-            <h2 style="color: white;">{{ info.info4 }}</h2>
+          <v-col cols="12" lg="5" class="pa-0">
+            <h2 style="color: white;text-align: center;">{{ info.info4 }}</h2>
           </v-col>
         </v-row>
       </v-container>
