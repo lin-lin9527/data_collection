@@ -1,5 +1,6 @@
 <template>
   <v-card
+    :id="id"
     :style="[{
       'border-radius': '5px',
       'border-width': '2px',
@@ -7,17 +8,15 @@
     }]"
   >
     <v-card-title :style="[{ 'background-color': info['color']}]">
-      <v-container>
-        <h1 style="text-align: center">{{ info['title']}}</h1>
-      </v-container>
+      <h1 class="pt-1 pb-1" style="text-align: center">{{ info['title']}}</h1>
     </v-card-title>
     <v-container class="pt-0 pb-0">
       <v-container class="pb-0">
         <v-row>
-          <v-col>
+          <v-col class="pt-0">
             <h3 style="font-size: 24px">{{ info['subtitle1']}}</h3>
           </v-col>
-          <v-col>
+          <v-col class="pt-0">
             <h3 style="font-size: 24px; text-align: center">{{ info['subtitle2']}}</h3>
           </v-col>
         </v-row>
@@ -68,6 +67,6 @@
 
 <script>
 export default {
-  props:["info"],
+  props:["info","id"],
 }
 </script>
