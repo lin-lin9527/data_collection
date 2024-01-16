@@ -10,6 +10,7 @@ const state = {
   // ================== Data Interval ==================
   machineInterval: null,
   // ================== Data Info ==================
+  editState: true,
   info: {
     1: {
       title: "常溫倉",

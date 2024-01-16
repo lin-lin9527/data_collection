@@ -4,6 +4,7 @@
     :style="[{
       'border-radius': '5px',
       'border-width': '2px',
+      'user-select': 'none',
       'border-color': info['color'],
     }]"
   >
@@ -59,7 +60,7 @@
             <h3 style="font-size: 24px; text-align: center">{{ info['info4'].value}}</h3>
           </v-col>
         </v-row>
-        <div style="height: 5px"></div>
+        <!-- <div style="height: 5px"></div> -->
       </v-container>
     </v-container>
   </v-card>
