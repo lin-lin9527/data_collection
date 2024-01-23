@@ -6,24 +6,38 @@ var legendSpacing = 7;
 var width = 250;
 var height = 250;
 
-var init = function (data, id) {
+var init = function (data, className) {
   radius = Math.min(width, height) / 2;
   donutWidth = 50; // 50: 中間顯示空白，125: 中間填滿
-  svg = d3.select(`.${id}`)
+  svg = d3.select(`.${className}`)
     .append('svg')
     .attr('width', width)
     .attr('height', height)
     .append('g')
     .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
   donutTip = d3.select("body").append("div")
-    .attr("class", `${id}-tip`)
+    .attr("class", `${className}-tip`)
+    .style("position", "absolute")
+    .style("text-align", "left")
+    .style("word-break", "break-word")
+    .style("width", "300px")
+    .style("padding", "20px 20px")
+    .style("font", "13px sans-serif")
+    .style("border", "0px")
+    .style("pointer-events", "none")
+    .style("border-radius", "8px")
+    .style("backdrop-filter", "blur(170px)")
+    .style("box-shadow", "rgba(0, 0, 0, 0.3) 2px 8px 8px")
+    .style("border", "0px rgba(255, 255, 255, 0.4) solid")
+    .style("border-bottom", "0px rgba(40, 40, 40, 0.35) solid")
+    .style("border-right", "0px rgba(40, 40, 40, 0.35) solid")
     .style("opacity", 0);
-  update(data, id);
+  update(data, className);
 };
 
-var update = function (data, id) {
-  var svgInfo = d3.select(`.${id} svg g`)
-  var tooltipInfo = d3.select(`.${id}-tip`)
+var update = function (data, className) {
+  var svgInfo = d3.select(`.${className} svg g`)
+  var tooltipInfo = d3.select(`.${className}-tip`)
   total = 0
   for (let i in data) total += data[i].value
   svgInfo.selectAll(".circle-legend").remove()

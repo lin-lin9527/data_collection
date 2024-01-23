@@ -197,6 +197,72 @@
         "title": "CH15",
         "value": 10
       }
+    },
+    "10": {
+      "title": "運轉中",
+      "subtitle1": "3~8度倉",
+      "subtitle2": "濕度",
+      "color": "rgb(221, 55, 222)",
+      "info1": {
+        "title": "CH12",
+        "value": 12
+      },
+      "info2": {
+        "title": "CH13",
+        "value": 10
+      },
+      "info3": {
+        "title": "CH14",
+        "value": 10
+      },
+      "info4": {
+        "title": "CH15",
+        "value": 10
+      }
+    },
+    "11": {
+      "title": "運轉中",
+      "subtitle1": "3~8度倉",
+      "subtitle2": "濕度",
+      "color": "rgb(55, 221, 222)",
+      "info1": {
+        "title": "CH12",
+        "value": 12
+      },
+      "info2": {
+        "title": "CH13",
+        "value": 10
+      },
+      "info3": {
+        "title": "CH14",
+        "value": 10
+      },
+      "info4": {
+        "title": "CH15",
+        "value": 10
+      }
+    },
+    "12": {
+      "title": "運轉中",
+      "subtitle1": "3~8度倉",
+      "subtitle2": "濕度",
+      "color": "rgb(221, 221, 55)",
+      "info1": {
+        "title": "CH12",
+        "value": 12
+      },
+      "info2": {
+        "title": "CH13",
+        "value": 10
+      },
+      "info3": {
+        "title": "CH14",
+        "value": 10
+      },
+      "info4": {
+        "title": "CH15",
+        "value": 10
+      }
     }
   }
 }

@@ -69,6 +69,26 @@
           </div>
           <div style="height: 10px"></div>
         </v-col>
+        <v-col cols="12" lg="3">
+          <div id="drag_position" class="delay4">
+            <div :id="'drag10'" style="position: relative">
+              <DataLogCard :info="item[10]" id="item10" />
+            </div>
+          </div>
+          <div style="height: 10px"></div>
+          <div id="drag_position" class="delay4">
+            <div :id="'drag11'" style="position: relative">
+              <DataLogCard :info="item[11]" id="item11" />
+            </div>
+          </div>
+          <div style="height: 10px"></div>
+          <div id="drag_position" class="delay4">
+            <div :id="'drag12'" style="position: relative">
+              <DataLogCard :info="item[12]" id="item12" />
+            </div>
+          </div>
+          <div style="height: 10px"></div>
+        </v-col>
       </v-row>
     </v-container>
   </v-main>
@@ -92,7 +112,7 @@ export default {
   data() {
     return {
       item: {},
-      elementCount: 9,
+      elementCount: 12,
     };
   },
   computed: {
@@ -220,6 +240,9 @@ export default {
 }
 .delay3 {
   animation: position_delay 1.2s;
+}
+.delay4 {
+  animation: position_delay 1.3s;
 }
 @keyframes position_delay {
   0% {

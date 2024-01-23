@@ -3,25 +3,18 @@
     <v-container class="pa-4">
       <v-row class="mt-0">
         <v-col cols="12" lg="3" xl="4" xxl="4" class="delay1">
-          <v-card class="card-info" style="min-height: 350px">
+          <v-card class="card-info" style="min-height: 360px">
             <v-card-title>
               <h3 class="card-title">R1 (TEST)</h3>
             </v-card-title>
             <v-container>
-              <div style="height:50px"></div>
-              <v-card style="background-color: rgb(247, 247, 247)">
-                <v-container>
-                  <div v-for="(item,index) in R1" :key="index">
-                    <h3>{{item.title}} &nbsp; : {{item.value}}</h3>
-                  </div>
-                </v-container>
-              </v-card>
+              <div class="linechart"></div>
             </v-container>
             <div style="height: 10px"></div>
           </v-card>
         </v-col>
         <v-col cols="12" lg="5" xl="4" xxl="4" class="delay2">
-          <v-card class="card-info" style="min-height: 350px">
+          <v-card class="card-info" style="min-height: 360px">
             <v-card-title>
               <h3 class="card-title">R2 (TEST)</h3>
             </v-card-title>
@@ -45,7 +38,7 @@
           </v-card>
         </v-col>
         <v-col cols="12" lg="4" xl="4" xxl="4" class="delay3">
-          <v-card class="card-info" style="min-height: 350px">
+          <v-card class="card-info" style="min-height: 360px">
             <v-card-title>
               <h3 class="card-title">R3 (TEST)</h3>
             </v-card-title>
@@ -66,13 +59,13 @@
             <v-card-title>
               <h3 class="card-title">R4(TEST)</h3>
             </v-card-title>
-            <!-- <v-row>
-              <v-spacer></v-spacer>
-              <v-col cols="5">
-                <div id="chart"></div>
-              </v-col>
-              <v-spacer></v-spacer>
-            </v-row> -->
+            <v-card style="background-color: rgb(247, 247, 247)">
+              <v-container>
+                <div v-for="(item,index) in R4" :key="index">
+                  <h3>{{item.title}} &nbsp; : {{item.value}}</h3>
+                </div>
+              </v-container>
+            </v-card>
             <v-container>
               <v-table density="comfortable" height="400px">
                 <thead>
@@ -98,7 +91,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item,index) in R4" :key="index" 
+                  <tr v-for="(item,index) in R5" :key="index" 
                     :style="[
                       {
                         'background-color': index %2 == 0 ? 'rgb(230, 230, 230)' : 'white' ,
@@ -129,7 +122,7 @@ import * as donutChart from "../d3/donutChart.js";
 
 import * as barChart from "../d3/barChart.js";
 
-// import * as lineChart from "../d3/lineChart.js";
+import * as lineChart from "../d3/lineChart.js";
 
 
 // Vuex
@@ -143,26 +136,34 @@ const { mapFields } = createHelpers({
 export default {
   data() {
     return {
-      R1: [
+      R1:  [
         {
-          "title": "工令單號",
-          "value": "M110XXXXXXX"
+          year: 2000,
+          popularity: 50
         },
         {
-          "title": "客戶",
-          "value": "A"
+          year: 2001,
+          popularity: 150
         },
         {
-          "title": "規格",
-          "value": "R-1232211"
+          year: 2002,
+          popularity: 200
         },
         {
-          "title": "交期",
-          "value": "2024/01/23"
+          year: 2003,
+          popularity: 130
         },
         {
-          "title": "數量",
-          "value": "23"
+          year: 2004,
+          popularity: 240
+        },
+        {
+          year: 2005,
+          popularity: 380
+        },
+        {
+          year: 2006,
+          popularity: 420
         }
       ],
       R2: [
@@ -214,6 +215,28 @@ export default {
         },
       ],
       R4: [
+        {
+          "title": "工令單號",
+          "value": "M110XXXXXXX"
+        },
+        {
+          "title": "客戶",
+          "value": "A"
+        },
+        {
+          "title": "規格",
+          "value": "R-1232211"
+        },
+        {
+          "title": "交期",
+          "value": "2024/01/23"
+        },
+        {
+          "title": "數量",
+          "value": "23"
+        }
+      ],
+      R5: [
         {
           name: 'Fern',
           events: 'Low',
@@ -305,18 +328,27 @@ export default {
   },
   mounted() {
     this.dataInit();
-    // this.lineChartInit();
     window.onresize = () => {
+      lineChart.editWidth(this.R1, "linechart");
       barChart.editWidth(this.R3, "barchart");
     };
   },
   methods: {
     dataInit() {
+      lineChart.init(this.R1, "linechart");
       donutChart.init(this.R2, "donutchart");
-      barChart.init(this.R3, "barchart");
       
+      barChart.init(this.R3, "barchart");
+
       clearInterval(this.machineInterval);
       this.machineInterval = setInterval(() => {
+        // ========================= R1 Data Update =========================
+        var newData = {}
+        newData["year"] = this.R1[this.R1.length -1]["year"] + 1
+        newData["popularity"] = Math.floor(Math.random() * 700);
+        this.R1.shift();
+        this.R1.push(newData)
+        lineChart.update(this.R1, "update", "linechart");
         // ========================= R2 Data Update =========================
         for (let i in this.R2) {
           this.R2[i].value = Math.floor(Math.random() * 120);
@@ -329,46 +361,6 @@ export default {
         barChart.update(this.R3, "barchart");
       }, 5000);
     },
-    lineChartInit() {
-      var data = [
-        {
-          year: 2000,
-          popularity: 50
-        },
-        {
-          year: 2001,
-          popularity: 150
-        },
-        {
-          year: 2002,
-          popularity: 200
-        },
-        {
-          year: 2003,
-          popularity: 130
-        },
-        {
-          year: 2004,
-          popularity: 240
-        },
-        {
-          year: 2005,
-          popularity: 380
-        },
-        {
-          year: 2006,
-          popularity: 420
-        }
-      ];
-      lineChart.init(data);
-      // setInterval(() => {
-      //   var newData = {}
-      //   newData["year"] = data[data.length -1]["year"] + 1
-      //   newData["popularity"] = Math.floor(Math.random() * 700);
-      //   data.push(newData)
-      //   lineChart.update(data);
-      // }, 1000);
-    }
   },
   onBeforeUnmount() {
     clearInterval(this.machineInterval);
@@ -403,20 +395,20 @@ export default {
   }
 }
 
-.donutchart-tip,.my_dataviz_tip {
-  position: absolute;
-  text-align: left;
-  word-break: break-word;
-  width: 300px;
-  padding: 20px 20px;
-  font: 13px sans-serif;
-  border: 0px;
-  pointer-events: none;
-  border-radius: 8px;
-  backdrop-filter: blur(170px);
-  box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
-  border: 0px rgba(255, 255, 255, 0.4) solid;
-  border-bottom: 0px rgba(40, 40, 40, 0.35) solid;
-  border-right: 0px rgba(40, 40, 40, 0.35) solid;
-}
+// .donutchart-tip,.barchart-tip {
+//   position: absolute;
+//   text-align: left;
+//   word-break: break-word;
+//   width: 300px;
+//   padding: 20px 20px;
+//   font: 13px sans-serif;
+//   border: 0px;
+//   pointer-events: none;
+//   border-radius: 8px;
+//   backdrop-filter: blur(170px);
+//   box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
+//   border: 0px rgba(255, 255, 255, 0.4) solid;
+//   border-bottom: 0px rgba(40, 40, 40, 0.35) solid;
+//   border-right: 0px rgba(40, 40, 40, 0.35) solid;
+// }
 </style>

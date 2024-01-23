@@ -1,32 +1,48 @@
 import * as d3 from "d3";
 
 var width, height, svg, barTooltip
-var init = function (data, id) {
+var init = function (data, className) {
   var margin = { top: 20, right: 40, bottom: 20, left: 50 }
-  width = document.querySelector(`.${id}`).clientWidth - 80
-  height = 200 ;
+  width = document.querySelector(`.${className}`).clientWidth - 80
+  height = 200;
 
-  svg = d3.select(`.${id}`)
+  svg = d3.select(`.${className}`)
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
-    .attr("class", `${id}_g`)
+    .attr("class", `${className}_g`)
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  barTooltip = d3.select("body").append("div").attr("class", `${id}_tip`).style("opacity", 0);
-  update(data, id);
+  barTooltip = d3.select("body").append("div")
+    .attr("class", `${className}-tip`)
+    .style("position", "absolute")
+    .style("text-align", "left")
+    .style("word-break", "break-word")
+    .style("width", "300px")
+    .style("padding", "20px 20px")
+    .style("font", "13px sans-serif")
+    .style("border", "0px")
+    .style("pointer-events", "none")
+    .style("border-radius", "8px")
+    .style("backdrop-filter", "blur(170px)")
+    .style("box-shadow", "rgba(0, 0, 0, 0.3) 2px 8px 8px")
+    .style("border", "0px rgba(255, 255, 255, 0.4) solid")
+    .style("border-bottom", "0px rgba(40, 40, 40, 0.35) solid")
+    .style("border-right", "0px rgba(40, 40, 40, 0.35) solid")
+    .style("opacity", 0);
+  update(data, className);
 }
 
-var editWidth = function (data, id) {
-  d3.select(`.${id} svg`).remove();
-  d3.select(`.${id}_tip`).remove();
-  init(data,id)
+var editWidth = function (data, className) {
+  d3.select(`.${className} svg`).remove();
+  d3.select(`.${className}_tip`).remove();
+  init(data, className)
 }
 
-var update = function (data, id) {
-  var svgInfo = d3.select(`.${id}_g`)
-  var tooltipInfo = d3.select(`.${id}_tip`)
+var update = function (data, className) {
+  var svgInfo = d3.select(`.${className}_g`)
+  var tooltipInfo = d3.select(`.${className}-tip`)
   svgInfo.selectAll(".xBar").remove()
   svgInfo.selectAll(".yBar").remove()
   var max = Math.max.apply(null, data.map(function (o) {
@@ -65,11 +81,11 @@ var update = function (data, id) {
       tooltipInfo.transition().duration(300).style("opacity", 1);
       barTooltipDraw(d, i, tooltipInfo)
     })
-    .on('mousemove', function(d, i) {
+    .on('mousemove', function (d, i) {
       d3.select(this).transition().duration(200).attr("fill", "#08B2B2")
       barTooltipDraw(d, i, tooltipInfo)
     })
-    .on('mouseout', function() {
+    .on('mouseout', function () {
       d3.select(this).transition().duration(200).attr("fill", "#69b3a2")
       tooltipInfo.transition().duration(300).style("opacity", 0);
     });
