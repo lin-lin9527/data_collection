@@ -9,7 +9,8 @@ var init = function (data, className) {
     .append("svg")
     .attr("width", width)
     .attr("height", 250);
-
+  d3.select(`.${className} svg`).append("g").attr("class", `${className}_group`).attr("transform", `translate(${margin.left},10)`);
+  d3.select(`.${className}_group`).append("g").attr("class", `${className}_chart_group`).attr("transform", `translate(-${margin.left},${margin.top})`);
   d3.select("body").append("div")
     .attr("class", `${className}-tip`)
     .style("position", "absolute")
@@ -36,23 +37,22 @@ var editWidth = function (data, className) {
 }
 
 var update = function (data, state, className) {
-  var remove_class = ["_group","_chart_group","_XBar","_YBar","_Path","_Circle"]
+  var remove_class = ["_XBar","_YBar","_Path","_Circle"]
   for (let i in remove_class) 
     d3.selectAll(`.${className}${remove_class[i]}`).remove()
-  
-  let chart = d3.select(`.${className} svg`).append("g").attr("class", `${className}_group`).attr("transform", `translate(${margin.left},10)`);
-  let grp = chart.append("g").attr("class", `${className}_chart_group`).attr("transform", `translate(-${margin.left},${margin.top})`);
+  let chart = d3.select(`.${className}_group`);
+  let grp = d3.select(`.${className}_chart_group`);
   let width = +d3.select(`.${className} svg`).attr("width") - margin.left - margin.right;
   let height = +d3.select(`.${className} svg`).attr("height") - margin.top - margin.bottom;
   let tooltipInfo = d3.select(`.${className}-tip`)
 
   // Create scales
-  const yScale = d3.scaleLinear()
-    .range([height, 0])
-    .domain([0, d3.max(data, d => d.popularity)]);
   const xScale = d3.scaleLinear()
     .range([0, width])
     .domain(d3.extent(data, d => d.year));
+  const yScale = d3.scaleLinear()
+    .range([height, 0])
+    .domain([0, d3.max(data, d => d.popularity)]);
   const line = d3.line()
     .x(d => xScale(d.year))
     .y(d => yScale(d.popularity));
@@ -77,15 +77,19 @@ var update = function (data, state, className) {
     .attr("stroke-dasharray", pathLength)
     .transition(transitionPath)
     .duration(state == "first" ? 1000 : 0)
+    .ease(d3.easeLinear)
     .on("start", tick)
     .attr("stroke-dashoffset", 0);
   function tick() {
-    if (state != "first") {
-      var lastYear = data[0].year
-      console.log("CCCCCCCCCCC",xScale(lastYear))
+    // if (state != "first") {
+      for (let i in data) {
+        console.log("@@@@@@@@@@@@@",xScale(data[i].year))
+      }
+      // var lastYear = data[0].year
+      // console.log("CCCCCCCCCCC",xScale(lastYear),xScale(0))
       d3.select(this).attr("d", line).attr("transform", null);
-      d3.active(this).attr("transform", "translate(" + 40 + ",0)").transition();  
-    }
+      d3.active(this).attr("transform", "translate(" + 0 + ",0)").transition();  
+    // }
   }
     
   // Add the X Axis
