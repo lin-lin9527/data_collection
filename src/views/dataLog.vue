@@ -11,19 +11,19 @@
       <v-row>
         <v-col cols="12" lg="3">
           <div id="drag_position" class="delay1">
-            <div :id="'drag1'" style="position: relative">
+            <div id="drag1" style="position: relative">
               <DataLogCard :info="item[1]" id="item1"/>
             </div>
           </div>
           <div style="height: 10px"></div>
           <div id="drag_position" class="delay1">
-            <div :id="'drag2'" style="position: relative">
+            <div id="drag2" style="position: relative">
               <DataLogCard :info="item[2]" id="item2" />
             </div>
           </div>
           <div style="height: 10px"></div>
           <div id="drag_position" class="delay1">
-            <div :id="'drag3'" style="position: relative">
+            <div id="drag3" style="position: relative">
               <DataLogCard :info="item[3]" id="item3" />
             </div>
           </div>
@@ -31,19 +31,19 @@
         </v-col>
         <v-col cols="12" lg="3">
           <div id="drag_position" class="delay2">
-            <div :id="'drag4'" style="position: relative">
+            <div id="drag4" style="position: relative">
               <DataLogCard :info="item[4]" id="item4" />
             </div>
           </div>
           <div style="height: 10px"></div>
           <div id="drag_position" class="delay2">
-            <div :id="'drag5'" style="position: relative">
+            <div id="drag5" style="position: relative">
               <DataLogCard :info="item[5]" id="item5" />
             </div>
           </div>
           <div style="height: 10px"></div>
           <div id="drag_position" class="delay2">
-            <div :id="'drag6'" style="position: relative">
+            <div id="drag6" style="position: relative">
               <DataLogCard :info="item[6]" id="item6" />
             </div>
           </div>
@@ -51,19 +51,19 @@
         </v-col>
         <v-col cols="12" lg="3">
           <div id="drag_position" class="delay3">
-            <div :id="'drag7'" style="position: relative">
+            <div id="drag7" style="position: relative">
               <DataLogCard :info="item[7]" id="item7" />
             </div>
           </div>
           <div style="height: 10px"></div>
           <div id="drag_position" class="delay3">
-            <div :id="'drag8'" style="position: relative">
+            <div id="drag8" style="position: relative">
               <DataLogCard :info="item[8]" id="item8" />
             </div>
           </div>
           <div style="height: 10px"></div>
           <div id="drag_position" class="delay3">
-            <div :id="'drag9'" style="position: relative">
+            <div id="drag9" style="position: relative">
               <DataLogCard :info="item[9]" id="item9" />
             </div>
           </div>
@@ -71,19 +71,19 @@
         </v-col>
         <v-col cols="12" lg="3">
           <div id="drag_position" class="delay4">
-            <div :id="'drag10'" style="position: relative">
+            <div id="drag10" style="position: relative">
               <DataLogCard :info="item[10]" id="item10" />
             </div>
           </div>
           <div style="height: 10px"></div>
           <div id="drag_position" class="delay4">
-            <div :id="'drag11'" style="position: relative">
+            <div id="drag11" style="position: relative">
               <DataLogCard :info="item[11]" id="item11" />
             </div>
           </div>
           <div style="height: 10px"></div>
           <div id="drag_position" class="delay4">
-            <div :id="'drag12'" style="position: relative">
+            <div id="drag12" style="position: relative">
               <DataLogCard :info="item[12]" id="item12" />
             </div>
           </div>
@@ -120,13 +120,12 @@ export default {
   },
   watch: {
     editState(isOpen) {
-      console.log("!!!!!!!!!!!!!!!!",isOpen)
       if (isOpen) {
         for (let i = 1; i <= this.elementCount; i++)
           this.dragElement(`item${String(i)}`);
       } else {
         for (let i = 1; i <= this.elementCount; i++)
-          this.closeDeagElement(`item${String(i)}`);
+          this.closeDragElement(`item${String(i)}`);
       }
     },
   },
@@ -138,7 +137,7 @@ export default {
       this.dragElement(`item${String(i)}`);
   },
   methods: {
-    closeDeagElement(idName) {
+    closeDragElement(idName) {
       var elmnt = document.getElementById(idName);
       elmnt.onmousedown = null;
       elmnt.onmouseenter = null;
@@ -150,9 +149,16 @@ export default {
       var that = this;
       var elmnt = document.getElementById(idName);
       var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-      elmnt.onmousedown = dragMouseDown;
       elmnt.onmouseenter = hoverNMouseEnter;
       elmnt.onmouseleave = hoverNMouseLeave;
+      elmnt.onmousedown = dragMouseDown;
+      
+      function hoverNMouseEnter(e) {
+        e.target.style["scale"] = 1.03;
+      }
+      function hoverNMouseLeave(e) {
+        e.target.style["scale"] = 1;
+      }
 
       function dragMouseDown(e) {
         e = e || window.event;
@@ -162,12 +168,7 @@ export default {
         document.onmousemove = dragElement;
         document.onmouseup = closeDragElement;
       }
-      function hoverNMouseEnter(e) {
-        e.target.style["scale"] = 1.03;
-      }
-      function hoverNMouseLeave(e) {
-        e.target.style["scale"] = 1;
-      }
+      
       function dragElement(e) {
         e = e || window.event;
         e.preventDefault();
@@ -177,10 +178,10 @@ export default {
         pos4 = e.clientY;
         elmnt.style.top = elmnt.offsetTop - pos2 + "px";
         elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
-
         for (let i = 1; i <= that.elementCount; i++) {
           var queryInfo = document.getElementById(`drag${String(i)}`);
-          queryInfo.style["z-index"] = `drag${String(i)}` == `drag${idName.split("item")[1]}` ? 0 : 100;
+          queryInfo.style["z-index"] = `drag${String(i)}` == `drag${idName.split("item")[1]}` ? 110 : 0;
+          queryInfo.style["pointer-events"] = `drag${String(i)}` == `drag${idName.split("item")[1]}` ? "none" : null;
         }
       }
 
@@ -189,30 +190,22 @@ export default {
         document.onmousemove = null;
         var dragID = "drag" + idName.split("item")[1];
         var sourceNode = document.getElementById(dragID).parentNode; // Source Node
+        var sourceChildNode = document.getElementById(dragID).children[0]; // Source Child Node
         var targetNode = e.target.offsetParent.parentNode.parentNode; // Target Node
         if (targetNode.id == "drag_position") {
           e.preventDefault();
-          var childrenNodeData = document.getElementById(dragID).children[0];
-          childrenNodeData.style.top = null;
-          childrenNodeData.style.left = null;
-
+          // Exchange data
           let positionID = targetNode.children[0].id.split("drag")[1]
           let sourceID = JSON.parse(JSON.stringify(that.item[idName.split("item")[1]]));
           let targetID = JSON.parse(JSON.stringify(that.item[positionID]));
           that.item[positionID] = sourceID;
           that.item[idName.split("item")[1]] = targetID;
-
           // sourceNode.appendChild(targetNode.children[0]);
           // targetNode.appendChild(document.getElementById(dragID));
-
           console.log(
             " Source Drag ID: ",dragID,
             " Target Drag ID: ",targetNode.children[0].id
           );
-          console.log(
-            " Source Node: ",sourceNode,
-            " Target Node: ",targetNode
-          )
           let posTop = targetNode.offsetTop - sourceNode.offsetTop;
           let posLeft = targetNode.offsetLeft - sourceNode.offsetLeft;
           const moveXAnimation = {
@@ -221,9 +214,13 @@ export default {
           };
           sourceNode.children[0].animate(moveXAnimation, {duration: 300});
         }
+        // Reset Style
+        sourceChildNode.style.top = null;
+        sourceChildNode.style.left = null;
         for (let i = 1; i <= that.elementCount; i++) {
           var queryInfo = document.getElementById(`drag${String(i)}`);
           queryInfo.style["z-index"] = null;
+          queryInfo.style["pointer-events"] = null;
         }
       }
     },
