@@ -1,16 +1,19 @@
 import * as d3 from "d3";
 
 var width
-var margin = { top: 0, bottom: 30, left: 40, right: 20 };
+var height = 200;
+var durationInfo = 2000
+var margin = { top: 20, right: 0, bottom: 0, left: 40 };
 var init = function (data, className) {
-  width = document.querySelector(`.${className}`).clientWidth
-  d3
-    .select(`.${className}`)
-    .append("svg")
-    .attr("width", width)
-    .attr("height", 250);
-  d3.select(`.${className} svg`).append("g").attr("class", `${className}_group`).attr("transform", `translate(${margin.left},10)`);
-  d3.select(`.${className}_group`).append("g").attr("class", `${className}_chart_group`).attr("transform", `translate(-${margin.left},${margin.top})`);
+  d3.select(`.${className} svg`).remove()
+  width = document.querySelector(`.${className}`).clientWidth;
+  var list_data = [];
+  for (let i = 0; i < 60; i++) {
+    list_data.push({
+      value: Math.floor(Math.random() * 500),
+      index: parseInt(i),
+    });
+  }
   d3.select("body").append("div")
     .attr("class", `${className}-tip`)
     .style("position", "absolute")
@@ -28,131 +31,123 @@ var init = function (data, className) {
     .style("border-bottom", "0px rgba(40, 40, 40, 0.35) solid")
     .style("border-right", "0px rgba(40, 40, 40, 0.35) solid")
     .style("opacity", 0);
-  update(data, "first", className)
-}
-
-var editWidth = function (data, className) {
-  d3.select(`.${className} svg`).remove();
-  init(data, className)
-}
-
-var update = function (data, state, className) {
-  var remove_class = ["_XBar","_YBar","_Path","_Circle"]
-  for (let i in remove_class) 
-    d3.selectAll(`.${className}${remove_class[i]}`).remove()
-  let chart = d3.select(`.${className}_group`);
-  let grp = d3.select(`.${className}_chart_group`);
-  let width = +d3.select(`.${className} svg`).attr("width") - margin.left - margin.right;
-  let height = +d3.select(`.${className} svg`).attr("height") - margin.top - margin.bottom;
   let tooltipInfo = d3.select(`.${className}-tip`)
+  var x = d3.scaleLinear().domain(d3.extent(list_data, (d) => d.index)).range([0, width]);
+  var y = d3.scaleLinear().domain([0, d3.max(list_data, (d) => d.value) + 20]).range([height, 0]);
+  var initX = x(-1)
 
-  // Create scales
-  const xScale = d3.scaleLinear()
-    .range([0, width])
-    .domain(d3.extent(data, d => d.year));
-  const yScale = d3.scaleLinear()
-    .range([height, 0])
-    .domain([0, d3.max(data, d => d.popularity)]);
-  const line = d3.line()
-    .x(d => xScale(d.year))
-    .y(d => yScale(d.popularity));
-
-  // Add path
-  const path = grp
-    .append("path")
-    .attr("class", `${className}_Path`)
-    .attr("transform", `translate(${margin.left},0)`)
-    .datum(data)
-    .attr("fill", "none")
-    .attr("stroke", "steelblue")
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5)
-    .attr("d", line);
-
-  const pathLength = path.node().getTotalLength();
-  const transitionPath = d3.transition().ease(d3.easeSin);
-  path
-    .attr("stroke-dashoffset", pathLength)
-    .attr("stroke-dasharray", pathLength)
-    .transition(transitionPath)
-    .duration(state == "first" ? 1000 : 0)
-    .ease(d3.easeLinear)
-    .on("start", tick)
-    .attr("stroke-dashoffset", 0);
-  function tick() {
-    // if (state != "first") {
-      for (let i in data) {
-        console.log("@@@@@@@@@@@@@",xScale(data[i].year))
-      }
-      // var lastYear = data[0].year
-      // console.log("CCCCCCCCCCC",xScale(lastYear),xScale(0))
-      d3.select(this).attr("d", line).attr("transform", null);
-      d3.active(this).attr("transform", "translate(" + 0 + ",0)").transition();  
-    // }
-  }
-    
-  // Add the X Axis
-  chart
+  var chart = d3
+    .select(`.${className}`)
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height+50)
     .append("g")
-    .attr("class", `${className}_XBar`)
-    .attr("transform", `translate(0,${height})`)
-    .call(d3.axisBottom(xScale).ticks(data.length));
-  // Add the Y Axis
-  chart
-    .append("g")
-    .attr("class", `${className}_YBar`)
-    .attr("transform", `translate(0, 0)`)
-    .call(d3.axisLeft(yScale));
+    .attr("class", `${className}_chart_group`)
+    .attr("transform", "translate(" + margin.left + "," + 10 + ")");
   
-  // Add Circle
-  var circleContainer = chart.append('g').attr('class', `${className}_Circle`);
-  data.forEach((datum, index) => drawCircle(datum, index));
-  function drawCircle(datum, index) {
-    circleContainer.datum(datum)
-    .append('circle')
-    .attr('class','circle')
-    .attr('cx',(d) => xScale(d.year))
-    .attr('cy',(d) => yScale(d.popularity))
-    .on('mouseenter', function(d,i) {
-      d3.select(this).attr('class','circle').attr('r', 6).attr("stroke-width", 3);
-      tooltipInfo.transition().duration(300).style("opacity", 1);
-      lineTooltipDraw(d, i, tooltipInfo)
-    })
-    .on('mousemove', function (d, i) {
-      lineTooltipDraw(d, i, tooltipInfo)
-    })
-    .on('mouseout', function() {
-      d3.select(this).attr('class','circle').attr('r', 5).attr("stroke-width", 2);
-      tooltipInfo.transition().duration(300).style("opacity", 0);
-    })
-    .transition()
-    .delay(() => {
-      if (state == "first") return 100*index
-      else return 0
-    })
-    .duration( () => {
-      if (state == "first") return 750
-      else return index == data.length-1 ? 750 : 0
-    })
-    .ease(d3.easeSin)
-    .attr('r',5)
-    .attr("fill", "white")
-    .attr("stroke", "blue")
-    .attr("stroke-width", 2);
+  chart.append("defs")
+    .append("clipPath")
+    .attr("id", `${className}_clip`)
+    .append("rect")
+    .attr("width", width)
+    .attr("height", height)
+  // -----------------------------------
+  var line = d3.line()
+    .x((d) => x(d.index))
+    .y((d) => y(d.value));
+  // -----------------------------------
+  
+  // Draw the axis
+  var axisX = chart
+    .append("g")
+    .attr("class", `${className}_axis_x`)
+    .attr("transform",`translate(0,${y(0)})`)
+    .call(d3.axisBottom(x));
+  
+  var axisY = chart
+    .append("g")
+    .attr("class", `${className}_axis_y`)
+    .attr("transform", `translate(0, 0)`)
+    .call(d3.axisLeft(y));
+  
+  // Append the holder for line chart and circles
+  var chartGroup = chart.append("g").attr("clip-path", `url(#${className}_clip)`)
+  var pathGroup = chartGroup.append("g").attr("class",`${className}_path_group`)
+  
+  // Append path
+  var path = pathGroup.append("path")
+    .attr("class", "line")
+    .attr("fill","none")
+    .attr("stroke","#D073BA")
+    .attr("stroke-width","1.5px");
+    
+  // Main loop
+  function tick() {
+    // Generate new data
+    var lastQ = {
+      value: Math.floor(Math.random() * 500),
+      index: list_data[list_data.length - 1].index + 1,
+    };
+    list_data.push(lastQ);
+    
+    // Draw new line
+    path.datum(list_data).attr("d", line)
+
+    // Update circles
+    var circles = pathGroup.selectAll("circle");
+    circles
+      .data(list_data)
+      .enter()
+      .append("circle")
+      .merge(circles)
+      .attr("r", 3)
+      .attr("stroke-width", 2)
+      .attr("stroke","#D073BA")
+      .attr("fill","white")
+      .attr("cx", (d) => x(d.index))
+      .attr("cy", (d) => y(d.value))
+      .on('mouseenter', function(d,i) {
+        d3.select(this).attr('class','circle').attr('r', 6).attr("stroke-width", 3);
+        tooltipInfo.transition().duration(300).style("opacity", 1);
+        lineTooltipDraw(d, i, tooltipInfo)
+      })
+      .on('mousemove', function (d, i) {
+        lineTooltipDraw(d, i, tooltipInfo)
+      })
+      .on('mouseout', function() {
+        d3.select(this).attr('class','circle').attr('r', 3).attr("stroke-width", 2);
+        tooltipInfo.transition().duration(300).style("opacity", 0);
+      });
+    circles.exit().remove();
+
+    // Shift the chart left
+    pathGroup.attr("transform", null)
+      .transition()
+      .duration(durationInfo)
+      .ease(d3.easeLinear)
+      .attr("transform", `translate(${initX},0)`)
+      .on("end", tick);
+
+    list_data.shift();
+    x.domain(d3.extent(list_data, (d) => d.index));
+    axisX.transition().duration(durationInfo).ease(d3.easeLinear).call(d3.axisBottom(x));
+    
+    y.domain([0, d3.max(list_data, (d) => d.value) + 20]);
+    axisY.transition().duration(durationInfo).ease(d3.easeLinear).call(d3.axisLeft(y));
   }
+  tick();
   function lineTooltipDraw(position, info, tooltip) {
     var left_position;
     let html = `<h2>
-      Year: ${info.year}<br>
-      Value: ${info.popularity}<br>
+      ID: ${info.index}<br>
+      Value: ${info.value}<br>
     </h2>`;
     if (width / 2 >= position.layerX - 50) left_position = position.pageX + 10;
     else left_position = position.pageX - 250;
     tooltip.html(html)
       .style("left", (left_position) + "px")
       .style("top", (position.pageY - 15) + "px");
-  }  
+  }
 }
 
-export { init,editWidth,update };
+export { init };

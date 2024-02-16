@@ -1,0 +1,101 @@
+<style>
+  .line {
+    fill: none;
+    stroke: blue;
+    stroke-width: 3px;
+  }
+  .circle {
+    stroke: #e74c3c;
+    stroke-width: 3px;
+    fill: #fff;
+  }
+</style>
+<svg id="chart"></svg>
+<script src="http://d3js.org/d3.v4.min.js"></script>
+<script>
+  var width = 960;
+  var height = 500;
+  var margin = { top: 20, right: 20, bottom: 20, left: 40 };
+  var n = 40;
+
+  var list_data = [];
+  for (let i = 0; i < n; i++) {
+    var Query = {
+      value: Math.floor(Math.random() * 120),
+      index: parseInt(i),
+    };
+    list_data.push(Query);
+  }
+
+  var chart = d3
+    .select("#chart")
+    .attr("width", width+50)
+    .attr("height", height+50)
+    .append("g").attr("class", `chart_group`)
+    .attr("transform", "translate(" + margin.left + "," + 0 + ")");
+  chart.append("defs")
+    .append("clipPath")
+    .attr("id", "clip")
+    .append("rect")
+    .attr("width", width)
+    .attr("height", height);
+  var x = d3.scaleLinear().domain(d3.extent(list_data, (d) => d.index)).range([0, width+40]);
+  var y = d3.scaleLinear().domain([0, d3.max(list_data, (d) => d.value) + 20]).range([height, 0]);
+  var initX = x(list_data[0]["index"] - 1);
+  // -----------------------------------
+  var line = d3.line()
+    .x(function (d) {return x(d.index);})
+    .y(function (d) {return y(d.value);});
+  // -----------------------------------
+  // Draw the axis
+  var xAxis = d3.axisBottom().scale(x);
+  var axisX = chart
+    .append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + y(0) + ")")
+    .call(xAxis);
+  chart
+    .append("g")
+    .attr("class", "axis axis--y")
+    .attr("transform", `translate(-40, 0)`)
+    .call(d3.axisLeft(y));
+    
+  // Append the holder for line chart and circles
+  var g = chart.append("g").attr("class","path_group");
+  // Append path
+  var path = g.append("path");
+  // Main loop
+  function tick() {
+    // Generate new data
+    var lastQ = {
+      value: Math.floor(Math.random() * 120),
+      index: list_data[list_data.length - 1].index + 1,
+    };
+    list_data.push(lastQ);
+    
+    // Draw new line
+    path.datum(list_data).attr("class", "line").attr("d", line);
+    // Update circles
+    var circles = g.selectAll("circle");
+    circles
+      .data(list_data)
+      .enter()
+      .append("circle")
+      .merge(circles)
+      .attr("r", 5)
+      .attr("cx", function (d) {return x(d.index);})
+      .attr("cy", function (d) {return y(d.value);});
+    circles.exit().remove();
+    // Shift the chart left
+    g.attr("transform", null)
+      .transition()
+      .duration(1000)
+      .ease(d3.easeLinear)
+      .attr("transform", "translate(" + initX + ",0)")
+      .on("end", tick);
+    list_data.shift();
+    x.domain(d3.extent(list_data, (d) => d.index));
+    axisX.transition().duration(1000).ease(d3.easeLinear).call(xAxis);
+  }
+  tick();
+</script>

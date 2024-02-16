@@ -12,11 +12,11 @@ import Headerbar from "@/components/Apply_layout/template2/Headerbar.vue";
 import Footer from "@/components/Apply_layout/template2/Footer.vue";
 
 
-import tmp1 from '@/views/test_template/tmp1.vue'
-import tmp2 from '@/views/test_template/tmp2.vue'
-import tmp3 from '@/views/test_template/tmp3.vue'
-import tmp4 from '@/views/test_template/tmp4.vue'
-import tmp5 from '@/views/test_template/tmp5.vue'
+import tmp1 from '@/test/test_template/tmp1.vue'
+import tmp2 from '@/test/test_template/tmp2.vue'
+import tmp3 from '@/test/test_template/tmp3.vue'
+import tmp4 from '@/test/test_template/tmp4.vue'
+import tmp5 from '@/test/test_template/tmp5.vue'
 
 // ============================================
 import login from "@/views/login_template/login1.vue"

@@ -138,32 +138,32 @@ export default {
     return {
       R1:  [
         {
-          year: 2000,
-          popularity: 50
+          index: 2000,
+          value: 50
         },
         {
-          year: 2001,
-          popularity: 150
+          index: 2001,
+          value: 150
         },
         {
-          year: 2002,
-          popularity: 200
+          index: 2002,
+          value: 200
         },
         {
-          year: 2003,
-          popularity: 130
+          index: 2003,
+          value: 130
         },
         {
-          year: 2004,
-          popularity: 240
+          index: 2004,
+          value: 240
         },
         {
-          year: 2005,
-          popularity: 380
+          index: 2005,
+          value: 380
         },
         {
-          year: 2006,
-          popularity: 420
+          index: 2006,
+          value: 420
         }
       ],
       R2: [
@@ -329,7 +329,7 @@ export default {
   mounted() {
     this.dataInit();
     window.onresize = () => {
-      lineChart.editWidth(this.R1, "linechart");
+      lineChart.init(this.R1, "linechart");
       barChart.editWidth(this.R3, "barchart");
     };
   },
@@ -337,18 +337,10 @@ export default {
     dataInit() {
       lineChart.init(this.R1, "linechart");
       donutChart.init(this.R2, "donutchart");
-      
       barChart.init(this.R3, "barchart");
 
       clearInterval(this.machineInterval);
       this.machineInterval = setInterval(() => {
-        // ========================= R1 Data Update =========================
-        var newData = {}
-        newData["year"] = this.R1[this.R1.length -1]["year"] + 1
-        newData["popularity"] = Math.floor(Math.random() * 700);
-        this.R1.shift();
-        this.R1.push(newData)
-        lineChart.update(this.R1, "update", "linechart");
         // ========================= R2 Data Update =========================
         for (let i in this.R2) {
           this.R2[i].value = Math.floor(Math.random() * 120);

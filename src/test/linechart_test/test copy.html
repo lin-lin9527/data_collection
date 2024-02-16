@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>D3.js Line Chart with Leftward Movement</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+      svg {
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>rest</h1>
+    <svg width="960" height="500"></svg>
+    <script>
+      var n = 40,
+        random = d3.randomInt(1, 60),
+        data = d3.range(n).map(random);
+      
+      var list_data = []
+      for (let i in data){
+        var Query = {
+          value: data[i],
+          index: parseInt(i)
+        }
+        list_data.push(Query)
+      }
+
+      var svg = d3.select("svg"),
+        margin = { top: 20, right: 20, bottom: 20, left: 40 },
+        width = +svg.attr("width") - margin.left - margin.right,
+        height = +svg.attr("height") - margin.top - margin.bottom,
+        g = svg.append("g").attr("class","svg_group").attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+      var x = d3
+        .scaleLinear()
+        .domain(d3.extent(list_data, d => d.index))
+        .range([0, width]);
+      var initX = x(list_data[0]["index"]-1)
+      var y = d3.scaleLinear().domain([0, (d3.max(list_data, d => d.value) + 20)]).range([height, 0]);
+
+      var line = d3
+        .line()
+        .x(function (d, i) {
+          return x(d.index);
+        })
+        .y(function (d, i) {
+          return y(d.value);
+        });
+      
+      g.append("defs")
+        .append("clipPath")
+        .attr("id", "clip")
+        .append("rect")
+        .attr("width", width)
+        .attr("height", height);
+
+      var axisX = g.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + y(0) + ")")
+        .call(d3.axisBottom(x));
+
+      g.append("g").attr("class", "axis axis--y").call(d3.axisLeft(y));
+      
+      var path = g.append("g")
+        .attr("class","path_clip")
+        .attr("clip-path", "url(#clip)")
+        .append("path")
+        .datum(list_data)
+        .attr("class", "line")
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-linejoin", "round")
+        .attr("stroke-linecap", "round")
+        .attr("stroke-width", 1.5)
+        .attr("d", line);
+      var circleContainer = d3.select(".path_clip")
+      const pathLength = path.node().getTotalLength();
+      const transitionPath = d3.transition().ease(d3.easeSin);
+      d3.select(".path_clip")
+        .transition(transitionPath)
+        .duration(1000)
+        .ease(d3.easeLinear)
+        // .on("start", tick)
+      
+      function tick() {
+        console.log(d3.select(this))
+        var lastQ = {
+          value: random(),
+          index: list_data[list_data.length-1].index + 1
+        }
+        list_data.push(lastQ);
+
+        var circles = circleContainer.selectAll('circle')
+        circles.data(list_data).enter().append('circle')
+          .merge(circles)
+          .attr('cx',(function(d){ return x(d.index); }))
+          .attr('cy',(function(d){ return y(d.value); }))
+          .attr('r',5);
+        circles.exit().remove();
+
+        // console.log(this,arguments)
+        x.domain(d3.extent(list_data, d => d.index));
+        // d3.select(this).attr("d", line).attr("transform", null);
+        // d3.active(this)
+        //   .attr("transform", "translate(" + initX + ",0)")
+        //   .transition()
+        //   .on("start", tick);
+        d3.select(".path_clip")
+          .attr("transform", null)
+          .transition()
+          .duration(1000)
+          .ease(d3.easeLinear, 0.1)
+          .attr("transform", "translate(" + initX + ",0)")
+          .on("end", tick);
+        d3.select(".axis--x").transition().duration(1000).ease(d3.easeLinear).call(d3.axisBottom(x));
+        
+        list_data.shift();
+      }
+      tick()
+    </script>
+  </body>
+</html>
